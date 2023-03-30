@@ -1,0 +1,13 @@
+# IDE
+.idea/
+
+# env
+venv/
+.env
+
+# Python
+__pycache__/
+
+# Django
+/media/
+/static/
