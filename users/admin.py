@@ -1,19 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.contenttypes.admin import GenericTabularInline
 
 from .models import Counterparty, User
-
-
-class UsersInline(GenericTabularInline):
-    model = User
-    fields = ('username',)
 
 
 @admin.register(Counterparty)
 class CounterpartyAdmin(admin.ModelAdmin):
     fields = ('name',)
-    inlines = (UsersInline,)
 
 
 @admin.register(User)

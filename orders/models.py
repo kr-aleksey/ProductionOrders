@@ -76,7 +76,7 @@ class Order(models.Model):
         (ACCEPTED, 'Принят исполнителем'),
         (REJECTED, 'Отклонен исполнителем')
     )
-
+    number = models.PositiveIntegerField('Номер')
     counterparty = models.ForeignKey(Counterparty,
                                      on_delete=models.CASCADE,
                                      related_name='orders',
@@ -115,3 +115,17 @@ class OrderNomenclature(models.Model):
     amount = models.DecimalField('Количество',
                                  max_digits=10,
                                  decimal_places=3)
+
+    class Meta:
+        verbose_name = 'Номенклатура заказа'
+        verbose_name_plural = 'Номенклатуры заказов'
+        ordering = ('order', 'nomenclature')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['order', 'nomenclature'],
+                name='unique_order_nomenclature'
+            )
+        ]
+
+    def __str__(self):
+        return f'{self.order.number} {self.nomenclature.name}'
