@@ -4,7 +4,7 @@
 
 ### Технологии
 
-* Python 3.10
+* Python 3.11
 * Django 4.1
 * PostgreSQL 15
 * Bootstrap 5.3
