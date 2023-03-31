@@ -135,3 +135,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Users
 
 AUTH_USER_MODEL = 'users.User'
+
+# Branding
+
+BRAND = os.getenv('BRAND', 'Production orders')
