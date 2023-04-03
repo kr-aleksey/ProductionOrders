@@ -48,6 +48,9 @@ class Nomenclature(models.Model):
     name = models.CharField('Наименование',
                             max_length=150,
                             unique=True)
+    measurement_unit = models.ForeignKey(MeasurementUnit,
+                                         on_delete=models.PROTECT,
+                                         verbose_name='Единица измерения')
     uid_erp = models.CharField('Идентификатор в ERP',
                                max_length=40,
                                unique=True)
@@ -55,8 +58,8 @@ class Nomenclature(models.Model):
                                    default=False)
 
     class Meta:
-        verbose_name = 'Номенклатура'
-        verbose_name_plural = 'Номенклатуры'
+        verbose_name = 'Продукция'
+        verbose_name_plural = 'Продукция'
         ordering = ('name',)
 
     def __str__(self):
@@ -90,7 +93,11 @@ class Order(models.Model):
                               choices=STATUSES)
     created_at = models.DateTimeField('Создан',
                                       auto_now_add=True)
-    note = models.TextField('Примечание')
+    note = models.TextField('Примечание',
+                            blank=True)
+
+    nom = models.ManyToManyField(Nomenclature,
+                                 through='OrderNomenclature')
 
     class Meta:
         verbose_name = 'Заказ'

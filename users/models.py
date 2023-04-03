@@ -15,6 +15,9 @@ class Counterparty(models.Model):
         verbose_name_plural = 'Контрагенты'
         ordering = ['name']
 
+    def __str__(self):
+        return self.name
+
 
 class User(AbstractUser):
     """
@@ -40,3 +43,6 @@ class User(AbstractUser):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
         ordering = ['first_name']
+
+    def __str__(self):
+        return f'{self.last_name} {self.first_name}'
