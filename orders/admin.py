@@ -1,16 +1,17 @@
 from django.contrib import admin
 
 from .models import (Category,
-                     Nomenclature,
+                     Product,
                      Order,
-                     OrderNomenclature,
+                     OrderProduct,
                      MeasurementUnit)
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    fields = ('name', 'uid_erp')
-    readonly_fields = ('uid_erp',)
+    list_display = ('name', 'parent')
+    fields = ('name', 'parent',)
+    # readonly_fields = ('uid_erp',)
 
 
 @admin.register(MeasurementUnit)
@@ -19,15 +20,15 @@ class MeasurementUnitAdmin(admin.ModelAdmin):
     readonly_fields = ('uid_erp',)
 
 
-@admin.register(Nomenclature)
-class NomenclatureAdmin(admin.ModelAdmin):
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
     fields = ('name', 'measurement_unit', 'in_stock', 'uid_erp')
     readonly_fields = ('uid_erp',)
 
 
-class OrderNomenclatureInline(admin.TabularInline):
-    model = OrderNomenclature
-    fields = ('order', 'nomenclature', 'amount', '')
+# class OrderProductInline(admin.TabularInline):
+#     model = OrderProduct
+#     fields = ('order', 'product', 'amount', '')
 
 
 @admin.register(Order)
@@ -39,7 +40,6 @@ class OrderAdmin(admin.ModelAdmin):
               'created_at',
               'note')
     readonly_fields = ('created_at',)
-    # inlines = (OrderNomenclatureInline,)
     list_display = ('number',
                     'counterparty',
                     'customer',

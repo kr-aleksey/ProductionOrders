@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block body %}
+    {% for category in categories %}
+        <div>
+            {{ category.name }}
+            {% for child in category.children.all %}
+                <div>
+                    &ensp;|____{{ child.name }}
+                </div>
+
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% endblock %}

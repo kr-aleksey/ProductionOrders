@@ -11,3 +11,6 @@ __pycache__/
 # Django
 /media/
 /static/
+
+# Branding
+ProductionOrders/static/logo.png

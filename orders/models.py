@@ -24,13 +24,20 @@ class MeasurementUnit(models.Model):
 
 class Category(models.Model):
     """
-    Категории номенклатуры.
+    Категории продукции.
     """
     name = models.CharField('Наименование',
                             max_length=150)
-    uid_erp = models.CharField('Идентификатор в ERP',
-                               max_length=40,
-                               unique=True)
+    parent = models.ForeignKey('self',
+                               on_delete=models.CASCADE,
+                               related_name='children',
+                               blank=True,
+                               null=True,
+                               verbose_name='Родитель')
+
+    # uid_erp = models.CharField('Идентификатор в ERP',
+    #                            max_length=40,
+    #                            blank=True)
 
     class Meta:
         verbose_name = 'Категория'
@@ -41,9 +48,15 @@ class Category(models.Model):
         return self.name
 
 
-class Nomenclature(models.Model):
+class ProductManager(models.Manager):
+
+    def in_stock(self):
+        return self.filter(in_stock=True)
+
+
+class Product(models.Model):
     """
-    Номенклатура.
+    Продукция.
     """
     name = models.CharField('Наименование',
                             max_length=150,
@@ -56,6 +69,8 @@ class Nomenclature(models.Model):
                                unique=True)
     in_stock = models.BooleanField('В продаже',
                                    default=False)
+
+    objects = ProductManager()
 
     class Meta:
         verbose_name = 'Продукция'
@@ -96,8 +111,6 @@ class Order(models.Model):
     note = models.TextField('Примечание',
                             blank=True)
 
-    nom = models.ManyToManyField(Nomenclature,
-                                 through='OrderNomenclature')
 
     class Meta:
         verbose_name = 'Заказ'
@@ -108,31 +121,29 @@ class Order(models.Model):
         return self.counterparty.name
 
 
-class OrderNomenclature(models.Model):
+class OrderProduct(models.Model):
     """
     M2M Заказ-номенклатура
     """
     order = models.ForeignKey('Order',
                               on_delete=models.CASCADE,
-                              related_name='nomenclatures',
+                              related_name='products',
                               verbose_name='Заказ')
-    nomenclature = models.ForeignKey('Nomenclature',
-                                     on_delete=models.PROTECT,
-                                     verbose_name='Номенклатура')
+    product = models.ForeignKey('Product',
+                                on_delete=models.PROTECT,
+                                verbose_name='Продукт')
     amount = models.DecimalField('Количество',
                                  max_digits=10,
                                  decimal_places=3)
 
     class Meta:
-        verbose_name = 'Номенклатура заказа'
-        verbose_name_plural = 'Номенклатуры заказов'
-        ordering = ('order', 'nomenclature')
+        # ordering = ('order', )
         constraints = [
             models.UniqueConstraint(
-                fields=['order', 'nomenclature'],
-                name='unique_order_nomenclature'
+                fields=['order', 'product'],
+                name='unique_order_product'
             )
         ]
 
     def __str__(self):
-        return f'{self.order.number} {self.nomenclature.name}'
+        return self.product.name
