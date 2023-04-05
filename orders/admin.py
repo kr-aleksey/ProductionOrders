@@ -10,7 +10,7 @@ from .models import (Category,
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'parent')
-    fields = ('name', 'parent',)
+    fields = ('name', 'parent')
     # readonly_fields = ('uid_erp',)
 
 
@@ -22,7 +22,15 @@ class MeasurementUnitAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    fields = ('name', 'measurement_unit', 'in_stock', 'uid_erp')
+    list_display = ('name', 'category', 'counterparty', 'in_stock')
+    list_editable = ('counterparty', 'in_stock')
+    list_filter = ('in_stock', 'counterparty')
+    fields = ('name',
+              'category',
+              'counterparty',
+              'measurement_unit',
+              'in_stock',
+              'uid_erp')
     readonly_fields = ('uid_erp',)
 
 

@@ -23,8 +23,9 @@ class User(AbstractUser):
     """
     Пользователи.
     """
+    USERNAME_FIELD = 'email'
 
-    REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     email = models.EmailField('Email',
                               unique=True)

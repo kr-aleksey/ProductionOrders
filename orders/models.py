@@ -53,6 +53,12 @@ class ProductManager(models.Manager):
     def in_stock(self):
         return self.filter(in_stock=True)
 
+    def all(self, user):
+        if user.is_anonymous or user.counterparty is None:
+            return self.none()
+        return self.filter(in_stock=True,
+                           counterparty=user.counterparty)
+
 
 class Product(models.Model):
     """
@@ -61,12 +67,21 @@ class Product(models.Model):
     name = models.CharField('Наименование',
                             max_length=150,
                             unique=True)
+    category = models.ForeignKey(Category,
+                                 on_delete=models.PROTECT,
+                                 verbose_name='Категория')
+    counterparty = models.ForeignKey(Counterparty,
+                                     on_delete=models.CASCADE,
+                                     blank=True,
+                                     null=True,
+                                     verbose_name='Контрагент')
     measurement_unit = models.ForeignKey(MeasurementUnit,
                                          on_delete=models.PROTECT,
                                          verbose_name='Единица измерения')
     uid_erp = models.CharField('Идентификатор в ERP',
                                max_length=40,
-                               unique=True)
+                               blank=True,
+                               null=True)
     in_stock = models.BooleanField('В продаже',
                                    default=False)
 
@@ -110,7 +125,6 @@ class Order(models.Model):
                                       auto_now_add=True)
     note = models.TextField('Примечание',
                             blank=True)
-
 
     class Meta:
         verbose_name = 'Заказ'

@@ -19,4 +19,5 @@ class UserAdmin(BaseUserAdmin):
                     'first_name',
                     'last_name',
                     'is_active',
-                    'is_staff')
+                    'is_staff',
+                    'is_superuser')

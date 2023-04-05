@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 
+from django.urls import reverse
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
 
     'debug_toolbar',
 
+    'core.apps.CoreConfig',
     'users.apps.UsersConfig',
     'orders.apps.OrdersConfig',
 ]
@@ -141,6 +143,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Users
 
 AUTH_USER_MODEL = 'users.User'
+LOGIN_URL = '/users/login/'
+
 
 # Branding
 

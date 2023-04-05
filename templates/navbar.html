@@ -1,53 +1,73 @@
 {% load static %}
-<nav class="navbar navbar-dark navbar navbar-expand-lg bg-dark">
+<nav class="navbar navbar-dark bg-dark sticky-top navbar-expand-lg bg-dark">
     <div class="container-lg">
-        <a class="navbar-brand" href="#">
-            <img src="{% static 'logo.png' %}" alt="" height="30">
+        <a class="navbar-brand" href="https://polipak.org">
+            <img src="{% static 'logo.png' %}" alt="" height="40">
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Переключатель навигации">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">Каталог</a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        {% for category in categories %}
-
-                            {% if category.children.all %}
-                                <li class="nav-item dropdown-submenu">
-                                    <a class="dropdown-item" href="#">{{ category }}</a>
-                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        {% for child in category.children.all %}
-                                            <li><a class="dropdown-item dropdown-sub-item" href="#">{{ child }}</a></li>
-                                        {% endfor %}
-                                    </ul>
-                                </li>
-                            {% else %}
-                                <li><a class="dropdown-item" href="#">{{ category }}</a></li>
-                            {% endif %}
-                        {% endfor %}
-                        <li>
-                            <hr class="dropdown-divider">
+        <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+            {% if request.user.is_anonymous %}
+                <div class="">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item ">
+                            <a class="nav-link active"
+                               aria-current="page"
+                               href="{% url 'users:login' %}"
+                            >Авторизация</a>
                         </li>
-                        <li><a class="dropdown-item" href="#">Вся продукция</a></li>
                     </ul>
-                </li>
+                </div>
 
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Главная</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Ссылка</a>
-                </li>
-            </ul>
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Поиск">
-                <button class="btn btn-outline-success" type="submit">Поиск</button>
-            </form>
+            {% else %}
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">Каталог</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            {% for category in categories %}
+                                {% if category.children.all %}
+                                    <li class="nav-item dropdown-submenu">
+                                        <a class="dropdown-item" href="#">{{ category }}</a>
+                                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                            {% for child in category.children.all %}
+                                                <li>
+                                                    <a class="dropdown-item dropdown-sub-item"
+                                                       href="#">{{ child }}</a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% else %}
+                                    <li><a class="dropdown-item" href="#">{{ category }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Вся продукция</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Ссылка</a>
+                    </li>
+                </ul>
+                <div>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Выход</a>
+                        </li>
+                    </ul>
+
+                </div>
+            {% endif %}
         </div>
     </div>
 </nav>
