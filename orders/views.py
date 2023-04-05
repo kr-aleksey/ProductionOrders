@@ -15,7 +15,7 @@ class ProductListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = f'{settings.BRAND} | Каталог'
+        context['brand'] = settings.BRAND
         context['categories'] = Category.objects.filter(parent=None).prefetch_related('children')
         return context
 

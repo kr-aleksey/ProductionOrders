@@ -25,6 +25,10 @@ body {
     min-height: var(--navbar-height);
 }
 
+.navbar-brand {
+    font-size: 2.2em;
+}
+
 .height-100 {
     height: 100%;
 }

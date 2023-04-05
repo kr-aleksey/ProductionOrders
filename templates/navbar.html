@@ -4,6 +4,7 @@
         <a class="navbar-brand" href="https://polipak.org">
             <img src="{% static 'logo.png' %}" alt="" height="40">
         </a>
+        <span class="navbar-brand">{{ brand }}</span>
         <button class="navbar-toggler"
                 type="button"
                 data-bs-toggle="collapse"
@@ -39,7 +40,8 @@
                                             {% for child in category.children.all %}
                                                 <li>
                                                     <a class="dropdown-item dropdown-sub-item"
-                                                       href="#">{{ child }}</a>
+                                                       href="#"
+                                                    >{{ child }}</a>
                                                 </li>
                                             {% endfor %}
                                         </ul>
@@ -58,9 +60,7 @@
                         <a class="nav-link" href="#">Ссылка</a>
                     </li>
                 </ul>
-                 <span class="me-5">
-                            Здравствуйте, {{ request.user.first_name }}!
-                    </span>
+                <span class="me-5">Здравствуйте, {{ request.user.first_name }}!</span>
                 <div>
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
