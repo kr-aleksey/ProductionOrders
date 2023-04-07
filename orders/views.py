@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 from django.views.generic.list import ListView
 
@@ -29,10 +30,12 @@ class ProductListView(LoginRequiredMixin, ListView):
         return get_products_for_user(self.request.user)
 
 
-@require_POST
 @login_required
 def cart_edit_view(request):
+    next_url = request.GET.get('next', reverse('orders:product_list'))
+    if request.method != 'POST':
+        return redirect(next_url)
     form = CartItemForm(request=request, data=request.POST)
     if form.is_valid():
         form.save()
-    return redirect(request.GET.get('next'))
+    return redirect(next_url)
