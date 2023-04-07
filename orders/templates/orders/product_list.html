@@ -1,9 +1,42 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
 {% block title %}{{ brand }} | Каталог {% endblock title %}
 {% block content %}
-    {% for product in products %}
-        <p>
-            {{ product }}
-        </p>
-    {% endfor %}
+    <h1 class="p-3">Каталог</h1>
+    <table class="table table-dark">
+        <tr>
+            <th>Наименование</th>
+            <th>Единица</th>
+            <th></th>
+        </tr>
+        {% for product in products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.measurement_unit }}</td>
+                <td>
+                    <form action="{% url 'orders:cart_edit' %}?next={{ request.path }}?{{ request.META.QUERY_STRING }}"
+                          method="post">
+                        {% csrf_token %}
+                        {{ cart_item_form.product|set_value:product.pk }}
+                        {{ cart_item_form.quantity|set_value:'0' }}
+                        {% if product.is_in_cart %}
+                            {{ cart_item_form.delete|set_value:'1' }}
+                            <input type="image"
+                                   src="{% static 'orders/check.png' %}"
+                                   alt="В корзине"
+                                   width="30"
+                                   height="30">
+                        {% else %}
+                            <input type="image"
+                                   src="{% static 'orders/cart.png' %}"
+                                   alt="В корзину"
+                                   width="30"
+                                   height="30">
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

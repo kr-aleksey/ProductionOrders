@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from users.models import Counterparty, User
@@ -53,11 +54,15 @@ class ProductManager(models.Manager):
     def in_stock(self):
         return self.filter(in_stock=True)
 
-    def all(self, user):
-        if user.is_anonymous or user.counterparty is None:
-            return self.none()
-        return self.filter(in_stock=True,
-                           counterparty=user.counterparty)
+    def annotate_is_in_cart(self, user):
+        if user.is_anonymous:
+            return self.all()
+        products_in_cart = Cart.objects.filter(user=user,
+                                               product=models.OuterRef('pk'))
+        return (self
+                .in_stock()
+                .filter(counterparty=user.counterparty)
+                .annotate(is_in_cart=models.Exists(products_in_cart)))
 
 
 class Product(models.Model):
@@ -88,12 +93,37 @@ class Product(models.Model):
     objects = ProductManager()
 
     class Meta:
-        verbose_name = 'Продукция'
+        verbose_name = 'Продукт'
         verbose_name_plural = 'Продукция'
         ordering = ('name',)
 
     def __str__(self):
         return self.name
+
+
+class Cart(models.Model):
+    """
+    Корзина покупок.
+    """
+    user = models.ForeignKey(User,
+                             on_delete=models.CASCADE,
+                             related_name='products_in_cart',
+                             verbose_name='Заказчик')
+    product = models.ForeignKey(Product,
+                                on_delete=models.CASCADE,
+                                verbose_name='Продукт')
+    quantity = models.DecimalField('Количество',
+                                   max_digits=10,
+                                   decimal_places=3,
+                                   validators=[MinValueValidator(0)])
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=('user', 'product'),
+                name='unique_user_product'
+            )
+        ]
 
 
 class Order(models.Model):
@@ -146,9 +176,9 @@ class OrderProduct(models.Model):
     product = models.ForeignKey('Product',
                                 on_delete=models.PROTECT,
                                 verbose_name='Продукт')
-    amount = models.DecimalField('Количество',
-                                 max_digits=10,
-                                 decimal_places=3)
+    quantity = models.DecimalField('Количество',
+                                   max_digits=10,
+                                   decimal_places=3)
 
     class Meta:
         # ordering = ('order', )

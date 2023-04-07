@@ -1,0 +1,43 @@
+{% if page_obj.has_other_pages %}
+    <nav aria-label="Навигация по страницам">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1" aria-label="Первая">
+                        <span aria-hidden="true">&lt;&lt;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Первая">
+                        <span aria-hidden="true">&lt;</span>
+                    </a>
+                </li>
+            {% endif %}
+            {% for p in page_obj.paginator.page_range %}
+                {% if p > page_obj.number|add:-5 and p < page_obj.number|add:5 %}
+                    {% if p == page_obj.number %}
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item" aria-current="page">
+                            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Первая">
+                        <span aria-hidden="true">&gt;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Последняя">
+                        <span aria-hidden="true">&gt;&gt;</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}

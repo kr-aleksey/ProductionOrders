@@ -11,10 +11,10 @@ html {
 body {
     overflow-x: hidden;
     font-family: "Roboto", "sans-serif";
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 300;
     /*line-height: 1.5;*/
-    background: rgb(45, 45, 47);
+    background: rgb(63, 63, 65);
     color: #fff;
     display: flex;
     flex-direction: column;

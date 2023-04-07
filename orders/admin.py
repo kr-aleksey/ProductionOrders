@@ -1,10 +1,6 @@
 from django.contrib import admin
 
-from .models import (Category,
-                     Product,
-                     Order,
-                     OrderProduct,
-                     MeasurementUnit)
+from .models import Category, MeasurementUnit, Order, Product
 
 
 @admin.register(Category)
