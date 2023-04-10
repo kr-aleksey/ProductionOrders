@@ -27,16 +27,16 @@ class UserAdmin(BaseUserAdmin):
                     'is_active',
                     'is_staff',
                     'is_superuser')
+    ordering = ('email',)
     inlines = (CartInline,)
-
     fieldsets = (
         (
             None,
-            {'fields': ('username', 'password')}
+            {'fields': ('email', 'password')}
         ),
         (
             'Персональные данные',
-            {'fields': ('first_name', 'last_name', 'email', 'counterparty')}
+            {'fields': ('first_name', 'last_name', 'counterparty')}
         ),
         (
             'Права',

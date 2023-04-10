@@ -3,6 +3,9 @@ from django.db import models
 
 from users.models import Counterparty, User
 
+product_quantity_max_digits = 10
+product_quantity_decimal_places = 3
+
 
 class MeasurementUnit(models.Model):
     """
@@ -35,10 +38,9 @@ class Category(models.Model):
                                blank=True,
                                null=True,
                                verbose_name='Родитель')
-
-    # uid_erp = models.CharField('Идентификатор в ERP',
-    #                            max_length=40,
-    #                            blank=True)
+    uid_erp = models.CharField('Идентификатор в ERP',
+                               max_length=40,
+                               blank=True)
 
     class Meta:
         verbose_name = 'Категория'
@@ -83,6 +85,13 @@ class Product(models.Model):
     measurement_unit = models.ForeignKey(MeasurementUnit,
                                          on_delete=models.PROTECT,
                                          verbose_name='Единица измерения')
+    pack_quantity = models.DecimalField(
+        'Количество в упаковке',
+        max_digits=8,
+        decimal_places=3,
+        validators=[MinValueValidator(0.001)],
+        default=1
+    )
     uid_erp = models.CharField('Идентификатор в ERP',
                                max_length=40,
                                blank=True,
@@ -112,10 +121,9 @@ class Cart(models.Model):
     product = models.ForeignKey(Product,
                                 on_delete=models.CASCADE,
                                 verbose_name='Продукт')
-    quantity = models.DecimalField('Количество',
-                                   max_digits=10,
-                                   decimal_places=3,
-                                   validators=[MinValueValidator(0)])
+    quantity = models.PositiveIntegerField('Количество упаковок',
+                                           validators=[MinValueValidator(1)],
+                                           default=1)
 
     class Meta:
         constraints = [
@@ -167,7 +175,7 @@ class Order(models.Model):
 
 class OrderProduct(models.Model):
     """
-    M2M Заказ-номенклатура
+    M2M Заказ-продукт
     """
     order = models.ForeignKey('Order',
                               on_delete=models.CASCADE,
@@ -176,9 +184,8 @@ class OrderProduct(models.Model):
     product = models.ForeignKey('Product',
                                 on_delete=models.PROTECT,
                                 verbose_name='Продукт')
-    quantity = models.DecimalField('Количество',
-                                   max_digits=10,
-                                   decimal_places=3)
+    quantity = models.PositiveIntegerField('Количество упаковок',
+                                           validators=[MinValueValidator(1)])
 
     class Meta:
         # ordering = ('order', )

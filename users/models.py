@@ -27,6 +27,8 @@ class User(AbstractUser):
 
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
+    username = None
+
     email = models.EmailField('Email',
                               unique=True)
     first_name = models.CharField('Имя',
