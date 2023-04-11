@@ -121,11 +121,10 @@ class Cart(models.Model):
     product = models.ForeignKey(Product,
                                 on_delete=models.CASCADE,
                                 verbose_name='Продукт')
-    quantity = models.PositiveIntegerField('Количество упаковок',
-                                           validators=[MinValueValidator(1)],
-                                           default=1)
+    quantity = models.PositiveIntegerField('Количество упаковок')
 
     class Meta:
+        ordering = ('product__name',)
         constraints = [
             models.UniqueConstraint(
                 fields=('user', 'product'),

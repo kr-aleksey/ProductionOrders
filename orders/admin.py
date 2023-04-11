@@ -21,9 +21,11 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'counterparty', 'in_stock')
     list_editable = ('counterparty', 'in_stock')
     list_filter = ('in_stock', 'counterparty')
+    search_fields = ('name',)
     fields = ('name',
               'category',
               'counterparty',
+              'pack_quantity',
               'measurement_unit',
               'in_stock',
               'uid_erp')

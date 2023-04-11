@@ -15,5 +15,5 @@ __pycache__/
 # Branding
 ProductionOrders/static/logo.png
 
-# data
-/data/
+# Fixtures
+/fixtures/

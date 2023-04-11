@@ -1,3 +1,5 @@
+from django.db.models import F
+
 from .models import Cart, Product
 
 
@@ -43,5 +45,17 @@ def get_products_for_user(user):
     return (Product
             .objects
             .annotate_is_in_cart(user)
-            .filter(counterparty=user.counterparty)
-            .select_related('measurement_unit'))
+            .filter(counterparty=user.counterparty))
+
+
+def get_cart_items(user):
+    """
+    Возвращает queryset с продуктами в корзине пользователя.
+    """
+    if user.is_anonymous:
+        return Cart.objects.none()
+    return (Cart
+            .objects
+            .filter(user=user)
+            .annotate(total=F('quantity') * F('product__pack_quantity')))
+

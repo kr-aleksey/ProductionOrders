@@ -28,28 +28,7 @@
         crossorigin="anonymous">
 </script>
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"
-        integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
-        crossorigin="anonymous">
-</script>
+{% block script %}{% endblock %}
 
-<script>
-    $(document).ready(function () {
-        // скрываем подменю при закрытии выпадающего меню
-        $('.navbar').on('hide.bs.dropdown', function (event) {
-            $('.dropdown-submenu').children("ul").hide(0);
-        })
-        // отображаем подменю
-        $('.dropdown-submenu').on('click', function (event) {
-            if (event.target.className.includes("dropdown-sub-item")) {
-                return
-            }
-            event.preventDefault();
-            event.stopPropagation();
-            $('.dropdown-submenu').children("ul").hide(200);
-            $(this).children("ul").show(200);
-        });
-    });
-</script>
 </body>
 </html>
