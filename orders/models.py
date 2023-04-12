@@ -121,7 +121,7 @@ class Cart(models.Model):
     product = models.ForeignKey(Product,
                                 on_delete=models.CASCADE,
                                 verbose_name='Продукт')
-    quantity = models.PositiveIntegerField('Количество упаковок')
+    quantity = models.PositiveIntegerField('Количество')
 
     class Meta:
         ordering = ('product__name',)

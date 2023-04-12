@@ -56,6 +56,5 @@ def get_cart_items(user):
         return Cart.objects.none()
     return (Cart
             .objects
-            .filter(user=user)
-            .annotate(total=F('quantity') * F('product__pack_quantity')))
+            .filter(user=user))
 
