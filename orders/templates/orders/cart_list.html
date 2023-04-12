@@ -4,7 +4,7 @@
 {% block title %}{{ brand }} | Корзина {% endblock title %}
 {% block content %}
     <h1 class="p-3">Корзина</h1>
-    <p>
+    <p class="px-3">
         <span class="text-danger">*</span> При вводе количества, значение может быть изменено относительно количества в
         упаковке
     </p>
@@ -30,8 +30,7 @@
                             <button class="btn btn-outline-secondary"
                                     type="button"
                                     onclick="dec(this)"
-                            >-
-                            </button>
+                            >-</button>
                             <input name="quantity"
                                    value="{{ cart_item.quantity }}"
                                    step="{{ cart_item.product.pack_quantity|stringformat:"s" }}"
@@ -43,8 +42,7 @@
                             <button class="btn btn-outline-secondary"
                                     type="button"
                                     onclick="inc(this)"
-                            >+
-                            </button>
+                            >+</button>
                         </div>
                     </form>
                 </td>
