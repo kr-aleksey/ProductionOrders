@@ -160,7 +160,7 @@ class Order(models.Model):
                               choices=STATUSES)
     created_at = models.DateTimeField('Создан',
                                       auto_now_add=True)
-    note = models.TextField('Примечание',
+    note = models.TextField('Примечания',
                             blank=True)
 
     class Meta:

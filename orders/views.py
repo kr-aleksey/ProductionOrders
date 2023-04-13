@@ -3,8 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView
 
 from .forms import CartItemForm
+from .models import Order
 from .services import get_cart_items, get_products_for_user
 
 
@@ -52,4 +54,16 @@ def cart_item_view(request):
     return HttpResponseRedirect(next_url)
 
 
+class OrderCreateView(CreateView):
+    """
+    Оформление заказа
+    """
+    model = Order
+    template_name = 'orders/order_create.html'
+    fields = ('note',)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['brand'] = settings.BRAND
+        return context
 

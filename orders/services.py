@@ -1,5 +1,3 @@
-from django.db.models import F
-
 from .models import Cart, Product
 
 
@@ -58,3 +56,6 @@ def get_cart_items(user):
             .objects
             .filter(user=user))
 
+
+def create_order_from_cart(user):
+    pass

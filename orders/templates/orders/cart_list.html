@@ -13,7 +13,7 @@
             <th>Наименование</th>
             <th class="text-center">Ед.</th>
             <th class="text-center">Кол-во <span class="text-danger">*</span></th>
-            <th class="text-center">Кол-во в упаковке</th>
+            <th class="text-center">В упаковке</th>
         </tr>
         {% for cart_item in cart_items %}
             <tr>
@@ -36,8 +36,8 @@
                                    step="{{ cart_item.product.pack_quantity|stringformat:"s" }}"
                                    min="{{ cart_item.product.pack_quantity|stringformat:"f" }}"
                                    onchange="update(this, 'update')"
-                                   class="text-bg-dark"
-                                   style="width: 4rem"
+                                   class="text-bg-dark form-control"
+                                   style="width: 4em"
                             >
                             <button class="btn btn-outline-secondary"
                                     type="button"

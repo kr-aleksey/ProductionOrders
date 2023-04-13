@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}{{ brand }} | Корзина {% endblock title %}
+{% block content %}
+    <h1 class="p-3">Оформление заказа</h1>
+
+    <div class="d-flex">
+        <div class="col-md-5 mx-auto mb-5">
+            <div class="card text-bg-dark">
+                <div class="card-body">
+                    <form method="post" class="m-3">
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                            <ul class="text-danger">
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            Покупатель:
+                            <div class="mx-3">
+                                {{ request.user.counterparty }}
+                            </div>
+                            <div class="mx-3">
+                                {{ request.user }}, email: {{ request.user.email }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.note.id_for_label }}"
+                                   class="form-label"
+                            >{{ form.note.label_tag }}</label>
+                            {% if form.note.errors %}
+                                {{ form.note|add_class:'form-control is-invalid text-bg-dark' }}
+                                <div class="invalid-feedback">
+                                    {{ form.note.errors }}
+                                </div>
+                            {% else %}
+                                {{ form.note|add_class:'text-bg-dark form-control' }}
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-outline-light">Подтвердить заказ</button>
+                    </form>
+                </div><!--card body-->
+            </div><!-- card -->
+        </div>
+    </div>
+{% endblock %}
