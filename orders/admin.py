@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, MeasurementUnit, Order, Product
+from .models import Category, MeasurementUnit, Order, OrderProduct, Product
 
 
 @admin.register(Category)
@@ -32,22 +32,47 @@ class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ('uid_erp',)
 
 
-# class OrderProductInline(admin.TabularInline):
-#     model = OrderProduct
-#     fields = ('order', 'product', 'amount', '')
+class OrderProductInline(admin.TabularInline):
+    model = OrderProduct
+    fields = ('product', 'quantity')
+
+    def __init__(self, parent_model, admin_site, counterparty=None):
+        self.counterparty = counterparty
+        super().__init__(parent_model, admin_site)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'product':
+            kwargs["queryset"] = (Product
+                                  .objects
+                                  .filter(counterparty=self.counterparty))
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    fields = ('number',
-              'counterparty',
-              'customer',
-              'status',
-              'created_at',
-              'note')
-    readonly_fields = ('created_at',)
     list_display = ('number',
                     'counterparty',
                     'customer',
                     'status',
-                    'created_at')
+                    'created_at',)
+    list_filter = ('status', 'counterparty',)
+    date_hierarchy = 'created_at'
+    search_fields = ('number',)
+    fields = ('number',
+              'counterparty',
+              'customer',
+              'created_at',
+              'note',
+              'status',)
+    readonly_fields = ('number',
+                       'counterparty',
+                       'customer',
+                       'created_at',
+                       'note',)
+
+    def get_inline_instances(self, request, obj=None):
+        return [
+            OrderProductInline(self.model,
+                               self.admin_site,
+                               counterparty=obj.counterparty)
+        ]

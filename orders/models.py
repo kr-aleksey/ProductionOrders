@@ -3,8 +3,11 @@ from django.db import models
 
 from users.models import Counterparty, User
 
-product_quantity_max_digits = 10
-product_quantity_decimal_places = 3
+product_quantity_attrs = {
+    'max_digits': 9,
+    'decimal_places': 3,
+    'validators': [MinValueValidator(0)]
+}
 
 
 class MeasurementUnit(models.Model):
@@ -12,10 +15,11 @@ class MeasurementUnit(models.Model):
     Единицы измерения.
     """
     name = models.CharField('Наименование',
-                            max_length=20)
+                            max_length=20,
+                            unique=True)
     uid_erp = models.CharField('Идентификатор в ERP',
                                max_length=40,
-                               unique=True)
+                               blank=True)
 
     class Meta:
         verbose_name = 'Единица измерения'
@@ -51,7 +55,7 @@ class Category(models.Model):
         return self.name
 
 
-class ProductManager(models.Manager):
+class ProductQuerySet(models.QuerySet):
 
     def in_stock(self):
         return self.filter(in_stock=True)
@@ -61,10 +65,7 @@ class ProductManager(models.Manager):
             return self.all()
         products_in_cart = Cart.objects.filter(user=user,
                                                product=models.OuterRef('pk'))
-        return (self
-                .in_stock()
-                .filter(counterparty=user.counterparty)
-                .annotate(is_in_cart=models.Exists(products_in_cart)))
+        return self.annotate(is_in_cart=models.Exists(products_in_cart))
 
 
 class Product(models.Model):
@@ -99,7 +100,7 @@ class Product(models.Model):
     in_stock = models.BooleanField('В продаже',
                                    default=False)
 
-    objects = ProductManager()
+    objects = ProductQuerySet.as_manager()
 
     class Meta:
         verbose_name = 'Продукт'
@@ -121,7 +122,8 @@ class Cart(models.Model):
     product = models.ForeignKey(Product,
                                 on_delete=models.CASCADE,
                                 verbose_name='Продукт')
-    quantity = models.PositiveIntegerField('Количество')
+    quantity = models.DecimalField('Количество',
+                                   **product_quantity_attrs)
 
     class Meta:
         ordering = ('product__name',)
@@ -183,11 +185,12 @@ class OrderProduct(models.Model):
     product = models.ForeignKey('Product',
                                 on_delete=models.PROTECT,
                                 verbose_name='Продукт')
-    quantity = models.PositiveIntegerField('Количество упаковок',
-                                           validators=[MinValueValidator(1)])
+    quantity = models.DecimalField('Количество',
+                                   **product_quantity_attrs)
 
     class Meta:
-        # ordering = ('order', )
+        verbose_name = 'Продукт'
+        verbose_name_plural = 'Продукция'
         constraints = [
             models.UniqueConstraint(
                 fields=['order', 'product'],

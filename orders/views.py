@@ -7,7 +7,9 @@ from django.views.generic.edit import CreateView
 
 from .forms import CartItemForm
 from .models import Order
-from .services import get_cart_items, get_products_for_user
+from .services import (create_order_from_cart,
+                       get_cart_items,
+                       get_products_for_user)
 
 
 class ProductListView(LoginRequiredMixin, ListView):
@@ -67,3 +69,7 @@ class OrderCreateView(CreateView):
         context['brand'] = settings.BRAND
         return context
 
+    def form_valid(self, form):
+        order = create_order_from_cart(self.request.user,
+                                       form.cleaned_data['note'])
+        return HttpResponseRedirect('/products/')

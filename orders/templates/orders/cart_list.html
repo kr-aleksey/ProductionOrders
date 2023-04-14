@@ -6,7 +6,7 @@
     <h1 class="p-3">Корзина</h1>
     <p class="px-3">
         <span class="text-danger">*</span> При вводе количества, значение может быть изменено относительно количества в
-        упаковке
+        упаковке. Чтобы удалить строку, введите 0.
     </p>
     <table class="table table-dark">
         <tr>
@@ -30,9 +30,10 @@
                             <button class="btn btn-outline-secondary"
                                     type="button"
                                     onclick="dec(this)"
-                            >-</button>
+                            >-
+                            </button>
                             <input name="quantity"
-                                   value="{{ cart_item.quantity }}"
+                                   value="{{ cart_item.quantity|floatformat }}"
                                    step="{{ cart_item.product.pack_quantity|stringformat:"s" }}"
                                    min="{{ cart_item.product.pack_quantity|stringformat:"f" }}"
                                    onchange="update(this, 'update')"
@@ -42,7 +43,8 @@
                             <button class="btn btn-outline-secondary"
                                     type="button"
                                     onclick="inc(this)"
-                            >+</button>
+                            >+
+                            </button>
                         </div>
                     </form>
                 </td>
@@ -50,18 +52,17 @@
             </tr>
         {% endfor %}
     </table>
+    <div class="mx-3">
+        {% if cart_items %}
+            <a href="{% url 'orders:order_create' %}" class="btn btn-outline-light">Оформить заказ</a>
+        {% else %}
+            Ваша корзина пуста, перейдите в <a href="{% url 'orders:catalog' %}">каталог</a>
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block script %}
     <script>
-        function round_multiple(value, multiple) {
-            // Округляет value до значения кратного multiple
-            if (value % multiple !== 0) {
-                value = Math.ceil(value / multiple) * multiple;
-            }
-            return value;
-        }
-
         function inc(element) {
             // инкремент
             let input = element.previousElementSibling;
@@ -74,11 +75,19 @@
             update(input, 'decrement')
         }
 
+        function round_multiple(value, multiple) {
+            // Округляет value до значения кратного multiple
+            if (value % multiple !== 0) {
+                value = Math.ceil(value / multiple) * multiple;
+            }
+            return value;
+        }
+
         function update(input, action) {
             // обновление значения элемента input
             let value = parseFloat(input.value);
             let step = parseFloat(input.step);
-            if (value < step) {
+            if (value > 0 && value < step) {
                 value = step;
             }
             switch (action) {

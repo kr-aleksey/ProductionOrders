@@ -18,6 +18,14 @@ class CartItemForm(forms.ModelForm):
         if hidden:
             self.fields['quantity'].widget = forms.HiddenInput()
 
+    def clean(self):
+        cleaned_data = super().clean()
+        product = cleaned_data.get('product')
+        quantity = self.cleaned_data.get('quantity', 0)
+        if product is not None and quantity != 0:
+            self.cleaned_data['quantity'] = max(quantity,
+                                                product.pack_quantity)
+
     def save(self, commit=True):
         product = self.cleaned_data['product']
         quantity = self.cleaned_data['quantity']

@@ -25,7 +25,7 @@
                                    width="30"
                                    height="30">
                         {% else %}
-                            {{ cart_item_form.quantity|set_initial_value:1 }}
+                            {{ cart_item_form.quantity|set_initial_value:product.pack_quantity }}
                             <input type="image"
                                    src="{% static 'orders/cart.png' %}"
                                    alt="В корзину"
