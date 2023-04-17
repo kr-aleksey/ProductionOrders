@@ -96,3 +96,12 @@ def create_order_from_cart(user, note):
     ]
     OrderProduct.objects.bulk_create(order_product_list)
     clear_cart(user)
+
+
+def get_counterparty_orders(user):
+    """
+    Возвращает все заказы контрагента.
+    """
+    if user.is_anonymous or user.counterparty is None:
+        return Order.objects.none()
+    return user.counterparty.orders.all()

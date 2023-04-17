@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.urls import reverse
 
 from users.models import Counterparty, User
 
@@ -168,10 +169,13 @@ class Order(models.Model):
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
-        ordering = ('counterparty',)
+        ordering = ('-created_at',)
 
     def __str__(self):
         return self.counterparty.name
+
+    def get_absolute_url(self):
+        return reverse('orders:order_detail', kwargs={'pk': self.pk})
 
 
 class OrderProduct(models.Model):
