@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'debug_toolbar',
+    'django_filters',
 
     'core.apps.CoreConfig',
     'users.apps.UsersConfig',
@@ -145,7 +146,6 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/products/'
 LOGOUT_REDIRECT_URL = '/users/login/'
-
 
 # Branding
 

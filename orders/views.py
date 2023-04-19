@@ -8,7 +8,8 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
 from .forms import CartItemForm, OrderForm
-from .models import Order
+from .filters import ProductFilter
+from .models import Category, Order
 from .services import (create_order_from_cart, get_cart_items,
                        get_products_for_user)
 
@@ -17,17 +18,24 @@ class ProductListView(LoginRequiredMixin, ListView):
     context_object_name = 'products'
     template_name = 'orders/product_list.html'
     paginate_by = 15
+    filter_set = None
 
     def get_queryset(self):
-        return get_products_for_user(self.request.user)
+        queryset = get_products_for_user(self.request.user)
+        self.filter_set = ProductFilter(self.request.GET, queryset)
+        return self.filter_set.qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # context['categories'] = Category.objects.filter(parent=None)
-        # .prefetch_related('children')
-        context['cart_item_form'] = CartItemForm(hidden=True)
+        # context['categories'] = (Category
+        #                          .objects
+        #                          .filter(parent=None)
+        #                          .prefetch_related('children'))
+
         context['brand'] = settings.BRAND
         context['title'] = 'Каталог'
+        context['filter'] = self.filter_set
+        context['cart_item_form'] = CartItemForm(hidden=True)
         return context
 
 
