@@ -3,7 +3,6 @@
 {% load custom_filters %}
 {% block title %}{{ brand }} | История заказов {% endblock title %}
 {% block content %}
-    <h1 class="p-3">История заказов</h1>
     <table class="table table-dark">
         <tr>
             <th>Номер</th>
@@ -12,9 +11,12 @@
             <th>Статус</th>
         </tr>
         {% for order in orders %}
-            <tr>
-            <a href="{{ order }}"></a>
-                <td>{{ order.number }}</td>
+            <tr class="position-relative">
+                <td>
+                    <a href="{{ order.get_absolute_url }}"
+                       class="stretched-link"></a>
+                    {{ order.number }}
+                </td>
                 <td>{{ order.created_at }}</td>
                 <td>{{ order.customer }}</td>
                 <td>{{ order.get_status_display }}</td>

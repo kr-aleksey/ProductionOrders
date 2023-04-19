@@ -140,14 +140,16 @@ class Order(models.Model):
     """
     Заказы покупателей.
     """
+    CANCELED = 'canceled'
     CREATED = 'created'
     ACCEPTED = 'accepted'
     REJECTED = 'rejected'
 
     STATUSES = (
+        (CANCELED, 'Отменен покупателем'),
         (CREATED, 'Создан покупателем'),
         (ACCEPTED, 'Принят исполнителем'),
-        (REJECTED, 'Отклонен исполнителем')
+        (REJECTED, 'Отклонен исполнителем'),
     )
     number = models.PositiveIntegerField('Номер')
     counterparty = models.ForeignKey(Counterparty,
@@ -175,7 +177,16 @@ class Order(models.Model):
         return self.counterparty.name
 
     def get_absolute_url(self):
-        return reverse('orders:order_detail', kwargs={'pk': self.pk})
+        return reverse('orders:order_update', kwargs={'pk': self.pk})
+
+    @property
+    def can_edited_by_counterparty(self):
+        """
+        Возвращает разрешение на изменение контрагентом.
+        """
+        if self.status in (self.CREATED,):
+            return True
+        return False
 
 
 class OrderProduct(models.Model):

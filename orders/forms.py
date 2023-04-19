@@ -1,6 +1,7 @@
 from django import forms
+from django.core.exceptions import ValidationError
 
-from .models import Cart
+from .models import Cart, Order
 from .services import creat_or_update_cart_item, delete_cart_item
 
 
@@ -35,3 +36,38 @@ class CartItemForm(forms.ModelForm):
         return creat_or_update_cart_item(self.request.user,
                                          product,
                                          quantity)
+
+
+class OrderForm(forms.ModelForm):
+
+    cancel = forms.BooleanField(label='Отменить заказ', required=False)
+
+    disabled = False
+
+    class Meta:
+        model = Order
+        fields = ('note', 'cancel')
+        widgets = {
+            'note': forms.Textarea(attrs={'rows': 4})
+        }
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if not self.instance.can_edited_by_counterparty:
+            self.disabled = True
+            self.fields['note'].disabled = True
+            self.fields['cancel'].disabled = True
+
+    def clean_cancel(self):
+        cancel = self.cleaned_data['cancel']
+        if cancel and not self.instance.can_edited_by_counterparty:
+            raise ValidationError('Заказ в текущем статусе '
+                                  'не может быть отменен.')
+        return cancel
+
+    def save(self, commit=True):
+        order = super().save(commit=False)
+        if self.cleaned_data.get('cancel'):
+            order.status = Order.CANCELED
+        order.save()
+        return order

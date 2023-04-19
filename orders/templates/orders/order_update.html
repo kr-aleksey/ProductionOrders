@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}{{ brand }} | Корзина {% endblock title %}
+{% block content %}
+    <div class="card text-bg-dark mb-3">
+        <div class="card-body row row-cols-2">
+            <div class="col">
+                <div class="m-3">№: {{ order.number }} от {{ order.created_at|date }}</div>
+                <div class="m-3">Заказчик: {{ order.customer }}</div>
+                <div class="m-3">Статус заказа: {{ order.get_status_display }}</div>
+            </div>
+            <div class="col">
+                <form method="post" class="m-3">
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <ul class="text-danger">
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.note.id_for_label }}" class="form-label">
+                            {{ form.note.label }}
+                        </label>
+                        {% if form.note.errors %}
+                            {{ form.note|add_class:'form-control is-invalid text-bg-dark' }}
+                            <div class="invalid-feedback">
+                                {{ form.note.errors }}
+                            </div>
+                        {% else %}
+                            {{ form.note|add_class:'text-bg-dark form-control' }}
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        {% if form.cancel.errors %}
+                            {{ form.cancel|add_class:'form-check-input is-invalid' }}
+                            <label for="{{ form.cancel.id_for_label }}" class="form-check-label">
+                                {{ form.cancel.lable }}
+                            </label>
+                            <div class="invalid-feedback">
+                                {{ form.cancel.errors }}
+                            </div>
+                        {% else %}
+                            {{ form.cancel|add_class:'form-check-input' }}
+                            <label for="{{ form.cancel.id_for_label }}" class="form-check-label">
+                                {{ form.cancel.label }}
+                            </label>
+                        {% endif %}
+                    </div>
+                    {% if form.disabled %}
+                        <button type="submit" class="btn btn-outline-light" disabled>Отправить</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-outline-light">Отправить</button>
+                    {% endif %}
+
+                </form>
+            </div>
+        </div><!--card body-->
+    </div><!-- card -->
+
+    <table class="table table-dark">
+        <tr>
+            <th>Наименование</th>
+            <th>Количество</th>
+        </tr>
+        {% for order_item in order_items %}
+            <tr>
+                <td>{{ order_item.product }}</td>
+                <td>
+                    {{ order_item.quantity|floatformat }} {{ order_item.product.measurement_unit }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
