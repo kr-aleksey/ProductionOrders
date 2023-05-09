@@ -6,24 +6,23 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
+from django_filters.views import FilterView
 
-from .forms import CartItemForm, OrderForm
 from .filters import ProductFilter
-from .models import Category, Order
+from .forms import CartItemForm, OrderForm
+from .models import Order
 from .services import (create_order_from_cart, get_cart_items,
                        get_products_for_user)
 
 
-class ProductListView(LoginRequiredMixin, ListView):
+class ProductListView(LoginRequiredMixin, FilterView):
     context_object_name = 'products'
     template_name = 'orders/product_list.html'
     paginate_by = 15
-    filter_set = None
+    filterset_class = ProductFilter
 
     def get_queryset(self):
-        queryset = get_products_for_user(self.request.user)
-        self.filter_set = ProductFilter(self.request.GET, queryset)
-        return self.filter_set.qs
+        return get_products_for_user(self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -34,7 +33,6 @@ class ProductListView(LoginRequiredMixin, ListView):
 
         context['brand'] = settings.BRAND
         context['title'] = 'Каталог'
-        context['filter'] = self.filter_set
         context['cart_item_form'] = CartItemForm(hidden=True)
         return context
 
@@ -84,8 +82,8 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
-        order = create_order_from_cart(self.request.user,
-                                       form.cleaned_data['note'])
+        create_order_from_cart(self.request.user,
+                               form.cleaned_data['note'])
         return redirect('orders:order_list')
 
 

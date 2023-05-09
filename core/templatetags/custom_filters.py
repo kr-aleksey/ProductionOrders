@@ -5,12 +5,22 @@ register = template.Library()
 
 # Устанавливает атрибут class виджета
 @register.filter
-def add_class(field, classes):
+def add_class(value, arg):
     try:
-        field.field.widget.attrs['class'] = classes
+        value.field.widget.attrs['class'] = arg
     except AttributeError:
-        return field
-    return field
+        pass
+    return value
+
+
+# Устанавливает обработчик события onchange виджета
+@register.filter
+def onchange(value, arg):
+    try:
+        value.field.widget.attrs['onchange'] = arg
+    except AttributeError:
+        pass
+    return value
 
 
 # Устанавливает значение field.initial

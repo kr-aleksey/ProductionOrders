@@ -93,7 +93,7 @@ DATABASES = {
         'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
         'NAME': os.getenv('POSTGRES_DB', 'production_orders'),
         'USER': os.getenv('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', '2882,ak'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'postgres'),
         'HOST': os.getenv('DB_HOST', 'localhost'),
         'PORT': os.getenv('DB_PORT', 5432)
     }
@@ -140,11 +140,11 @@ STATICFILES_DIRS = os.path.join(BASE_DIR, 'ProductionOrders/static/'),
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Users
+# Authentication
 
 AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = '/users/login/'
-LOGIN_REDIRECT_URL = '/products/'
+LOGIN_REDIRECT_URL = '/products/categories/'
 LOGOUT_REDIRECT_URL = '/users/login/'
 
 # Branding

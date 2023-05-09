@@ -4,44 +4,56 @@
 {% block title %}{{ brand }} | Каталог {% endblock title %}
 {% block content %}
 
-    <form method="get">
-        {{ filter.form.as_p }}
-        <input type="submit" />
-    </form>
+    <div>
+        <form method="get">
+            <div class="col-lg-5 mb-4">
+                <div class="input-group">
+                    <div class="form-floating">
+                        {{ filter.form.search|onchange:'this.form.submit();'|add_class:'form-control' }}
+                        <label for="{{ filter.form.search.id_for_label }}">{{ filter.form.search.label }}</label>
+                    </div>
+                    <button class="btn btn-outline-secondary" type="submit">Найти</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div>
+        {% if not products %}
+            <div>
+                <td>Ничего не найдено</td>
+            </div>
+        {% endif %}
+        <table class="table table-dark">
+
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>
+                        <form action="{% url 'orders:cart_edit' %}?next={{ request.path }}?{{ request.META.QUERY_STRING }}"
+                              method="post">
+                            {% csrf_token %}
+                            {{ cart_item_form.product|set_initial_value:product.pk }}
+                            {% if product.is_in_cart %}
+                                {{ cart_item_form.quantity|set_initial_value:0 }}
+                                <input type="image"
+                                       src="{% static 'orders/check.png' %}"
+                                       alt="В корзине"
+                                       width="30"
+                                       height="30">
+                            {% else %}
+                                {{ cart_item_form.quantity|set_initial_value:product.pack_quantity }}
+                                <input type="image"
+                                       src="{% static 'orders/cart.png' %}"
+                                       alt="В корзину"
+                                       width="30"
+                                       height="30">
+                            {% endif %}
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
 
 
-
-    <table class="table table-dark">
-        <tr>
-            <th>Наименование</th>
-            <th></th>
-        </tr>
-        {% for product in products %}
-            <tr>
-                <td>{{ product.name }}</td>
-                <td>
-                    <form action="{% url 'orders:cart_edit' %}?next={{ request.path }}?{{ request.META.QUERY_STRING }}"
-                          method="post">
-                        {% csrf_token %}
-                        {{ cart_item_form.product|set_initial_value:product.pk }}
-                        {% if product.is_in_cart %}
-                            {{ cart_item_form.quantity|set_initial_value:0 }}
-                            <input type="image"
-                                   src="{% static 'orders/check.png' %}"
-                                   alt="В корзине"
-                                   width="30"
-                                   height="30">
-                        {% else %}
-                            {{ cart_item_form.quantity|set_initial_value:product.pack_quantity }}
-                            <input type="image"
-                                   src="{% static 'orders/cart.png' %}"
-                                   alt="В корзину"
-                                   width="30"
-                                   height="30">
-                        {% endif %}
-                    </form>
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
 {% endblock %}
